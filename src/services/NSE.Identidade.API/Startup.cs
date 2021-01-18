@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using NSE.Identidade.API.Data;
 
 namespace NSE.Identidade.API
@@ -39,10 +40,27 @@ namespace NSE.Identidade.API
 
             // Antigo AddMvc, suporte ao WebApi
             services.AddControllers();
+
+            // Swagger
+            services.AddSwaggerGen( c => {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "NerdSotre Enterprise Identity API",
+                    Description = "Esta API faz parte do curso ASP.NET Core Enterprise Applications.",
+                    Contact = new OpenApiContact() { Name = "Willian Raphael", Email = "willian.mattos@gmail.com" },
+                    License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/licenses/MIT")}
+                });
+            }); 
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1"); // Endpoint para acessarmos o swagger
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

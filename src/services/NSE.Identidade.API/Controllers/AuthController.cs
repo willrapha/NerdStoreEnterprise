@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace NSE.Identidade.API.Controllers
 {
+    [ApiController] // Atributo que diz que esta classe é uma controller, libera schema swagger
     [Route("api/identidade")]
-    public class AuthController : Controller
+    public class AuthController : Controller // Herda as capacidades de uma controller
     {
         private readonly SignInManager<IdentityUser> _signInManager; // Gerenciar questoes de login
         private readonly UserManager<IdentityUser> _userManager; // Gerenciar questoes de como administrar o usuario
