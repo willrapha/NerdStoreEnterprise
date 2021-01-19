@@ -84,6 +84,15 @@ namespace NSE.Identidade.API.Controllers
         {
             var user = await _userManager.FindByNameAsync(email);
             var claims = await _userManager.GetClaimsAsync(user); // dado aberto
+
+            var identityClaims = await ObterClaimsUsuario(claims, user);
+            var encodedToken = CodificarToken(identityClaims);
+
+            return ObterRespostaToken(encodedToken, user, claims);
+        }
+
+        private async Task<ClaimsIdentity> ObterClaimsUsuario(IList<Claim> claims, IdentityUser user)
+        {
             var userRoles = await _userManager.GetRolesAsync(user); // papeis
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
@@ -100,6 +109,11 @@ namespace NSE.Identidade.API.Controllers
             var identityClaims = new ClaimsIdentity(); // Objeto real da coleção de claims do usuario
             identityClaims.AddClaims(claims);
 
+            return identityClaims;
+        }
+
+        private string CodificarToken(ClaimsIdentity identityClaims)
+        {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
 
@@ -112,9 +126,12 @@ namespace NSE.Identidade.API.Controllers
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature) // Com base na nossa chave
             });
 
-            var encodedToken = tokenHandler.WriteToken(token);
+            return tokenHandler.WriteToken(token);
+        }
 
-            var response = new UsuarioRespostaLogin
+        private UsuarioRespostaLogin ObterRespostaToken(string encodedToken, IdentityUser user, IList<Claim> claims)
+        {
+            return new UsuarioRespostaLogin
             {
                 AccessToken = encodedToken,
                 ExpiresIn = TimeSpan.FromHours(_appSettings.ExpiracaoHoras).TotalSeconds,
@@ -125,8 +142,6 @@ namespace NSE.Identidade.API.Controllers
                     Claims = claims.Select(c => new UsuarioClaim { Type = c.Type, Value = c.Value })
                 }
             };
-
-            return response;
         }
 
         // Conversão para data padrão aceita pelo JWT
