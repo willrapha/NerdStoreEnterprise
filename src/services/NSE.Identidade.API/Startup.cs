@@ -39,7 +39,8 @@ namespace NSE.Identidade.API
             // Configuração Identity
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddErrorDescriber<IdentityMensagensPortugues>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()               
                 .AddDefaultTokenProviders(); // Não é o JWT, token para identificar email entre outros
 
             // *****Configurações JWT*****
