@@ -16,7 +16,7 @@ namespace NSE.WebApp.MVC.Services
             _httpClient = httpClient;
         }
 
-        public async Task<string> Login(UsuarioLogin usuarioLogin)
+        public async Task<UsuarioRespostaLogin> Login(UsuarioLogin usuarioLogin)
         {
             // conteudo
             var loginContent = new StringContent(
@@ -26,11 +26,17 @@ namespace NSE.WebApp.MVC.Services
 
             var response = await _httpClient.PostAsync("http://localhost:54487/api/identidade/autenticar", loginContent);
 
+            // Remover Case Sensitive
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             // Deserializando conteudo
-            return JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+            return JsonSerializer.Deserialize<UsuarioRespostaLogin>(await response.Content.ReadAsStringAsync(), options);
         }
 
-        public async Task<string> Registro(UsuarioRegistro usuarioRegistro)
+        public async Task<UsuarioRespostaLogin> Registro(UsuarioRegistro usuarioRegistro)
         {
             // conteudo
             var registroContent = new StringContent(
@@ -41,7 +47,7 @@ namespace NSE.WebApp.MVC.Services
             var response = await _httpClient.PostAsync("https://localhost:44345/api/identidade/nova-conta", registroContent);
 
             // Deserializando conteudo
-            return JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+            return JsonSerializer.Deserialize<UsuarioRespostaLogin>(await response.Content.ReadAsStringAsync());
         }
     }
 }
