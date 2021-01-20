@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using NSE.WebApp.MVC.Extensions;
 
 namespace NSE.WebApp.MVC.Configuration
@@ -21,15 +20,18 @@ namespace NSE.WebApp.MVC.Configuration
             //}
             //else
             //{
-                // Middleware ja existente que pega as exceções realiza um log, resetar o request path e reexecuta o request apontando pra essa pagina
-                // trataremos apenas o 500 aqui por se tratar de algum erro no servidor que nao sabemos por isso jogaremos uma msg generica
-                app.UseExceptionHandler("/erro/500");
-
-                // Para os erros que ja conhecemos (401,403,404,450 ...) utilizaremos esse Middleware disponibilizado pelo aspnet core, 
-                // que verifica quando a um problema com um status code de erro dentro desse response redirecionaremos para essa rota
-                app.UseStatusCodePagesWithRedirects("erro/{0}"); 
-                app.UseHsts();
+                
             //}
+
+            // Middleware ja existente que pega as exceções realiza um log, resetar o request path e reexecuta o request apontando pra essa pagina
+            // trataremos apenas o 500 aqui por se tratar de algum erro no servidor que nao sabemos por isso jogaremos uma msg generica
+            app.UseExceptionHandler("/erro/500");
+
+            // Para os erros que ja conhecemos (401,403,404,450 ...) utilizaremos esse Middleware disponibilizado pelo aspnet core, 
+            // que verifica quando a um problema com um status code de erro dentro desse response redirecionaremos para essa rota
+            app.UseStatusCodePagesWithRedirects("erro/{0}");
+            app.UseHsts();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

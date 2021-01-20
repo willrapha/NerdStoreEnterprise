@@ -52,7 +52,7 @@ namespace NSE.WebApp.MVC.Services
                 Encoding.UTF8,
                 "application/json");
 
-            var response = await _httpClient.PostAsync("https://localhost:44345/api/identidade/nova-conta", registroContent);
+            var response = await _httpClient.PostAsync("http://localhost:54487/api/identidade/nova-conta", registroContent);
 
             // Remover Case Sensitive
             var options = new JsonSerializerOptions
