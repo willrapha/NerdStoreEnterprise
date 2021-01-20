@@ -16,7 +16,7 @@ namespace NSE.WebApp.MVC.Services
                 case 401:
                 case 403:
                 case 404:
-                case 450:
+                case 500:
                     throw new CustomHttpRequestException(response.StatusCode);
 
                 case 400:

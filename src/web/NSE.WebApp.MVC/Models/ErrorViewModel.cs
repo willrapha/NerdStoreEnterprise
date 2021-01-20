@@ -7,10 +7,6 @@ namespace NSE.WebApp.MVC.Models
         public int ErroCode { get; set; }
         public string Titulo { get; set; }
         public string Mensagem { get; set; }
-
-        // TODO : Remover
-        public bool ShowRequestId { get; set; }
-        public string RequestId { get; set; }
     }
 
     public class ResponseResult
