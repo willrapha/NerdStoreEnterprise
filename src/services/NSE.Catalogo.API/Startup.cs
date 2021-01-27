@@ -32,10 +32,7 @@ namespace NSE.Catalogo.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatalogoContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddApiConfiguration();
+            services.AddApiConfiguration(Configuration);
             services.AddSwaggerConfiguration();
             services.RegisterServices();
         }
