@@ -22,7 +22,6 @@ namespace NSE.WebApp.MVC.Extensions
             }
             catch (CustomHttpRequestException ex)
             {
-
                 HandleRequestExceptionAsync(httpContext, ex);
             }
         }

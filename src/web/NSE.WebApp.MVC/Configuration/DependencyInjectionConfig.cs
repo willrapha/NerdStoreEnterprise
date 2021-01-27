@@ -10,6 +10,7 @@ namespace NSE.WebApp.MVC.Configuration
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddHttpClient<IAutenticacaoService, AutenticacaoService>();
+            services.AddHttpClient<ICatalogoService, CatalogoService>();
 
             // Singleton - porque utilizamos para a aplicação toda
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
