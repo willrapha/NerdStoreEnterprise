@@ -32,7 +32,7 @@ namespace NSE.WebApp.MVC.Configuration
 
             // Para os erros que ja conhecemos (401,403,404,450 ...) utilizaremos esse Middleware disponibilizado pelo aspnet core, 
             // que verifica quando a um problema com um status code de erro dentro desse response redirecionaremos para essa rota
-            app.UseStatusCodePagesWithRedirects("erro/{0}");
+            app.UseStatusCodePagesWithRedirects("/erro/{0}");
             app.UseHsts();
 
             app.UseHttpsRedirection();
