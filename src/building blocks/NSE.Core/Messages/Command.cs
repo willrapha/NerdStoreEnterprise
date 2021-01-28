@@ -1,9 +1,12 @@
 ﻿using FluentValidation.Results;
+using MediatR;
 using System;
 
 namespace NSE.Core.Messages
 {
-    public abstract class Command : Message
+    // IRequest - necessario para que os comandos sejam interpretados pelo MediatR
+    // O MediatR irá retornar um objeto de validação em nosso caso o 'ValidationResult'
+    public abstract class Command : Message, IRequest<ValidationResult>
     {
         public DateTime Timestamp { get; private set; }
         public ValidationResult ValidationResult { get; set; }

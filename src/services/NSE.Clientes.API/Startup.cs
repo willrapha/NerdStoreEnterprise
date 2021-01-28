@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,6 +35,7 @@ namespace NSE.Clientes.API
             services.AddApiConfiguration(Configuration);
             services.AddJwtConfiguration(Configuration);
             services.AddSwaggerConfiguration();
+            services.AddMediatR(typeof(Startup)); // necessario instalar pacote <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
             services.RegisterServices();
         }
 

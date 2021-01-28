@@ -1,16 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FluentValidation.Results;
+using MediatR;
+using NSE.Clientes.API.Models;
+using NSE.Core.Messages;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NSE.Clientes.API.Application.Commands
 {
     // Manipulador do nosso comando 'RegistrarClienteCommand'
-    public class ClienteCommandHandler
+    public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarClienteCommand, ValidationResult>
     {
-        public void Manipular(RegistrarClienteCommand message)
+        // cancellationToken - padrao para controlar a execução da tread
+        public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
         {
+            if (!message.EhValido()) return message.ValidationResult;
 
+            var cliente = new Cliente(message.Id, message.Nome, message.Email, message.Cpf);
+
+            // Validacoes de negocio
+
+            // Persistir no banco
+
+            if (true)
+            {
+                AdicionarErro("Este CPF já está em uso.");
+                return ValidationResult;
+            }
+
+            return message.ValidationResult;
         }
     }
 }
