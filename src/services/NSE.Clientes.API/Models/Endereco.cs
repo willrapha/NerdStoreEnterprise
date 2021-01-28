@@ -16,7 +16,7 @@ namespace NSE.Clientes.API.Models
         public Guid ClienteId { get; private set; }
         public Cliente Cliente { get; private set; }
 
-        // EF Relation
+        // EF Construtor
         protected Endereco() { }
 
         public Endereco(string logradouro, string numero, string complemento, string bairro, string cep, string cidade, string estado)
