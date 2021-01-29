@@ -10,6 +10,13 @@ namespace NSE.Clientes.API.Application.Commands
     // Manipulador do nosso comando 'RegistrarClienteCommand'
     public class ClienteCommandHandler : CommandHandler, IRequestHandler<RegistrarClienteCommand, ValidationResult>
     {
+        private readonly IClienteRepository _clienteRepository;
+
+        public ClienteCommandHandler(IClienteRepository clienteRepository)
+        {
+            _clienteRepository = clienteRepository;
+        }
+
         // cancellationToken - padrao para controlar a execução da tread
         public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
         {
@@ -17,17 +24,17 @@ namespace NSE.Clientes.API.Application.Commands
 
             var cliente = new Cliente(message.Id, message.Nome, message.Email, message.Cpf);
 
-            // Validacoes de negocio
+            var clienteExistente = await _clienteRepository.ObterPorCpf(cliente.Cpf.Numero);
 
-            // Persistir no banco
-
-            if (true)
+            if (clienteExistente != null)
             {
                 AdicionarErro("Este CPF já está em uso.");
                 return ValidationResult;
             }
 
-            return message.ValidationResult;
+            _clienteRepository.Adicionar(cliente);
+
+            return await PersistirDados(_clienteRepository.UnitOfWork);
         }
     }
 }

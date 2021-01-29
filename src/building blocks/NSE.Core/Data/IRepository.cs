@@ -7,6 +7,7 @@ namespace NSE.Core.Data
     // Apenas um repositorio por raiz de agregação
     public interface IRepository<T> : IDisposable where T : IAggregateRoot
     {
+        IUnitOfWork UnitOfWork { get; }
 
     }
 }
