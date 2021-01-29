@@ -1,5 +1,6 @@
 ﻿using FluentValidation.Results;
 using MediatR;
+using NSE.Clientes.API.Application.Events;
 using NSE.Clientes.API.Models;
 using NSE.Core.Messages;
 using System.Threading;
@@ -33,6 +34,10 @@ namespace NSE.Clientes.API.Application.Commands
             }
 
             _clienteRepository.Adicionar(cliente);
+
+            // A execucao do evento é feita apos o commit em nossa classe de contexto
+            // evento reference a algo que aconteceu no passado
+            cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
 
             return await PersistirDados(_clienteRepository.UnitOfWork);
         }
