@@ -6,6 +6,7 @@ using NSE.Clientes.API.Application.Events;
 using NSE.Clientes.API.Data;
 using NSE.Clientes.API.Data.Repository;
 using NSE.Clientes.API.Models;
+using NSE.Clientes.API.Services;
 using NSE.Core.Mediator;
 
 namespace NSE.Clientes.API.Configuration
@@ -25,6 +26,10 @@ namespace NSE.Clientes.API.Configuration
 
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<ClientesContext>();
+
+            // AddHostedService - o ciclo da injeção de dependencia funciona como Singleton - trabalha como um só no pipeline do aspnet
+            // E uma vez que temos um instancia de um objeto singleton nao podemos injetar nada que seja diferente de singleton nessa classe
+            services.AddHostedService<RegistroClienteIntegrationHandler>();
 
         }
     }

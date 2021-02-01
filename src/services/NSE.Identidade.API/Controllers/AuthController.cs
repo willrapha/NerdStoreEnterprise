@@ -28,12 +28,11 @@ namespace NSE.Identidade.API.Controllers
 
         public AuthController(SignInManager<IdentityUser> signInManager,
                               UserManager<IdentityUser> userManager,
-                              IOptions<AppSettings> appSettings, IBus bus) // IOptions utilizado para ler arquivos de configuração
+                              IOptions<AppSettings> appSettings) // IOptions utilizado para ler arquivos de configuração
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _appSettings = appSettings.Value;
-            _bus = bus;
         }
 
         [HttpPost("nova-conta")]
@@ -76,6 +75,9 @@ namespace NSE.Identidade.API.Controllers
             // Bus
             _bus = RabbitHutch.CreateBus("host=localhost:5672");
 
+            // UsuarioRegistradoIntegrationEvent - tipo de dado que estamos passando
+            // ResponseMessage - reposta que estamos esperando
+            // usuarioRegistrado - dado que esta sendo passado
             var sucesso = await _bus.RequestAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(usuarioRegistrado);
 
             return sucesso;
