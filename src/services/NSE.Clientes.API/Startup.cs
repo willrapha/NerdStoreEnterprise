@@ -37,6 +37,7 @@ namespace NSE.Clientes.API
             services.AddSwaggerConfiguration();
             services.AddMediatR(typeof(Startup)); // necessario instalar pacote <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
             services.RegisterServices();
+            services.AddMessageBusConfiguration(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
