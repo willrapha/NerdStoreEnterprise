@@ -12,6 +12,7 @@ namespace NSE.MessageBus
     public class MessageBus : IMessageBus
     {
         private IBus _bus;
+        private IAdvancedBus _advancedBus; // Recursos que a interface IBus não oferece, utilizado para recuperação de falhas entre outros
         private readonly string _connectionString;
 
         public MessageBus(string connectionString)
@@ -21,6 +22,8 @@ namespace NSE.MessageBus
         }
 
         public bool IsConnected => _bus?.IsConnected ?? false;
+
+        public IAdvancedBus AdvancedBus => _bus?.Advanced;
 
         public void Publish<T>(T message) where T : IntegrationEvent
         {
@@ -88,7 +91,22 @@ namespace NSE.MessageBus
                 .WaitAndRetry(3, retryAttempt =>
                     TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Pra cada tentativas fazemos o exponencial de 2 sobre tentativa
 
-            policy.Execute(() => { _bus = RabbitHutch.CreateBus(_connectionString); });
+            policy.Execute(() =>
+            { 
+                _bus = RabbitHutch.CreateBus(_connectionString);
+                _advancedBus = _bus.Advanced; // Precisamos da interface pois nao conseguimos trabalhar diretamente com o _bus.Advanced
+                _advancedBus.Disconnected += OnDisconnect; // Assim que for desconectado a conexao com o Bus de imediato tentamos conectar novamente
+            });
+        }
+
+        // Padrao de assinatura de um EventHandler
+        private void OnDisconnect(object s, EventArgs e)
+        {
+            var policy = Policy.Handle<EasyNetQException>()
+                .Or<BrokerUnreachableException>()
+                .RetryForever(); // Sempre tentara reconectar a mensageria
+
+            policy.Execute(TryConnect);
         }
 
         public void Dispose()

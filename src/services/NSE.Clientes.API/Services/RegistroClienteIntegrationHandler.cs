@@ -26,17 +26,30 @@ namespace NSE.Clientes.API.Services
             _bus = bus;
         }
 
-        // Ao executar o projeto ele chamara primeiro esse metodo para criar o Bus porque esse metodo é um 'BackgroundService', o Bus ficara disponivel
-        // o tempo inteiro esperando uma requisição
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        private void SetResponder()
         {
             // UsuarioRegistradoIntegrationEvent - classe que estamos esperando
             // ResponseMessage - tipo de resposta
             // request - retorno da classe que estamos esperando
-            var sucesso = _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
+            _bus.RespondAsync<UsuarioRegistradoIntegrationEvent, ResponseMessage>(async request =>
                 await RegistrarCliente(request));
 
+            _bus.AdvancedBus.Connected += OnConnect;
+        }
+
+        // Ao executar o projeto ele chamara primeiro esse metodo para criar o Bus porque esse metodo é um 'BackgroundService', o Bus ficara disponivel
+        // o tempo inteiro esperando uma requisição
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            SetResponder();
+
             return Task.CompletedTask;
+        }
+
+        private void OnConnect(object sender, EventArgs e)
+        {
+            // Sempre estamos renovando a "subscription" - senão da timeout no rabbitMQ
+            SetResponder();
         }
 
         private async Task<ResponseMessage> RegistrarCliente(UsuarioRegistradoIntegrationEvent message)
