@@ -13,7 +13,7 @@ namespace NSE.Clientes.API.Services
 {
     // Manipulador de integração, que trabalha como um BackgroundService
     // BackgroundService - feature do aspnet core, funciona a parte de um request, trabalha em paralelo ao pipeline do aspnetcore - similar ao hangfire
-    // BackgroundService - tem escopo singleton, devido a isso todas as injeções de dependencia nessa classe precisam tbm ser singleton
+    // tem escopo singleton, devido a isso todas as injeções de dependencia nessa classe precisam tbm ser singleton
     public class RegistroClienteIntegrationHandler : BackgroundService
     {
         // Não é necessario injetar pq sobrescrevemos ela no RabbitHutch.CreateBus
@@ -25,9 +25,11 @@ namespace NSE.Clientes.API.Services
             _serviceProvider = serviceProvider;
         }
 
+        // Ao executar o projeto ele chamara primeiro esse metodo para criar o Bus porque esse metodo é um 'BackgroundService', o Bus ficara disponivel
+        // o tempo inteiro esperando uma requisição
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _bus = RabbitHutch.CreateBus("localhost:5672");
+            _bus = RabbitHutch.CreateBus("host=localhost:5672");
 
             // UsuarioRegistradoIntegrationEvent - classe que estamos esperando
             // ResponseMessage - tipo de resposta
