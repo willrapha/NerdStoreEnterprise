@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NSE.Carrinho.API.Model;
 using NSE.Core.Data;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace NSE.Carrinho.API.Data
             ChangeTracker.AutoDetectChangesEnabled = false;
         }
 
+        public DbSet<CarrinhoItem> CarrinhoItens { get; set; }
+        public DbSet<CarrinhoCliente> CarrinhoClientes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Ignore<ValidationResult>();
@@ -25,14 +29,19 @@ namespace NSE.Carrinho.API.Data
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
                 property.SetColumnType("varchar(100)");
 
+            // Criando sem o arquivo de configuração, não precisamos do ApplyConfigurationsFromAssembly
+            modelBuilder.Entity<CarrinhoCliente>()
+                .HasIndex(c => c.ClienteId)
+                .HasName("IDX_Cliente");
+
+            modelBuilder.Entity<CarrinhoCliente>()
+                .HasMany(c => c.Itens)
+                .WithOne(i => i.CarrinhoCliente)
+                .HasForeignKey(c => c.CarrinhoId);
+
             // Onde houver relacionamento iremos desligar o delete cascade
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
                 relationship.DeleteBehavior = DeleteBehavior.ClientSetNull;
-
-            // Ira aplicar as configurações do ClienteContext
-            // Entao qualquer coisa de Mapping que esteja implementando o IEntityTypeConfiguration para uma entidade que está sendo representada em nosso contexto ClienteContext
-            // será mapeada e assim automaticamento ele vai aplicar esta e qualquer outra classe de configuração de mapeamento pro banco
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CarrinhoContext).Assembly);
         }
 
         public async Task<bool> Commit()

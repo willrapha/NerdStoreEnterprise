@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NSE.Clientes.API.Configuration;
+using NSE.Carrinho.API.Configuration;
 using NSE.WebAPI.Core.Identidade;
 
 namespace NSE.Carrinho.API
