@@ -18,7 +18,7 @@ namespace NSE.Carrinho.API.Data
         }
 
         public DbSet<CarrinhoItem> CarrinhoItens { get; set; }
-        public DbSet<CarrinhoCliente> CarrinhoClientes { get; set; }
+        public DbSet<CarrinhoCliente> CarrinhoCliente { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
