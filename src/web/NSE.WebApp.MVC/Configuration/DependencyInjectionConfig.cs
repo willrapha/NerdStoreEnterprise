@@ -21,16 +21,32 @@ namespace NSE.WebApp.MVC.Configuration
             // Injecao para nosso annotation
             // Ele irá se resolver quando tiver um atributo 'Cpf' sendo utilizado
             services.AddSingleton<IValidationAttributeAdapterProvider, CpfValidationAttributeAdapterProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // Singleton - porque utilizamos para a aplicação toda
+            services.AddScoped<IAspNetUser, AspNetUser>();
 
+            #region HttpServices
             // Injeçao para ser resolvido nosso Handler
             // Estamos utilizando Transient porque ja estamos trabalhando no modo Scoped do request esse cara vai ser chamado um instancia de cada vez
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
             // HttpClient atraves do meu HttpClientFactory
-            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>();
+            services.AddHttpClient<IAutenticacaoService, AutenticacaoService>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy(
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<ICatalogoService, CatalogoService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>(); // HttpClientAuthorizationDelegatinhHandler - Handler que criamos para manipular o request
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>() // HttpClientAuthorizationDelegatinhHandler - Handler que criamos para manipular o request
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy(
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+
+            services.AddHttpClient<ICarrinhoService, CarrinhoService>()
+                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
+                .AddPolicyHandler(PollyExtensions.EsperarTentar())
+                .AddTransientHttpErrorPolicy(
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+            #endregion
 
             #region Polly com Circuit Breaker
             // Circuit Breaker - encerra a conexão após n tentativas
@@ -67,11 +83,6 @@ namespace NSE.WebApp.MVC.Configuration
             //.AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
             //.AddTypedClient(Refit.RestService.For<ICatalogoServiceRefit>);
             #endregion
-
-            // Singleton - porque utilizamos para a aplicação toda
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            services.AddScoped<IAspNetUser, AspNetUser>();
         }
     }
 
