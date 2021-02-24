@@ -29,6 +29,8 @@ namespace NSE.Carrinho.API.Data
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
                 property.SetColumnType("varchar(100)");
 
+            modelBuilder.Ignore<ValidationResult>();
+
             // Criando sem o arquivo de configuração, não precisamos do ApplyConfigurationsFromAssembly
             modelBuilder.Entity<CarrinhoCliente>()
                 .HasIndex(c => c.ClienteId)
