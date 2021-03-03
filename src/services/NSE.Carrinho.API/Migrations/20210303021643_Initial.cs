@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace NSE.Carrinho.API.Migrations
 {
-    public partial class Carrinho : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CarrinhoClientes",
+                name: "CarrinhoCliente",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
@@ -17,7 +17,7 @@ namespace NSE.Carrinho.API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CarrinhoClientes", x => x.Id);
+                    table.PrimaryKey("PK_CarrinhoCliente", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,16 +36,16 @@ namespace NSE.Carrinho.API.Migrations
                 {
                     table.PrimaryKey("PK_CarrinhoItens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CarrinhoItens_CarrinhoClientes_CarrinhoId",
+                        name: "FK_CarrinhoItens_CarrinhoCliente_CarrinhoId",
                         column: x => x.CarrinhoId,
-                        principalTable: "CarrinhoClientes",
+                        principalTable: "CarrinhoCliente",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IDX_Cliente",
-                table: "CarrinhoClientes",
+                table: "CarrinhoCliente",
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
@@ -60,7 +60,7 @@ namespace NSE.Carrinho.API.Migrations
                 name: "CarrinhoItens");
 
             migrationBuilder.DropTable(
-                name: "CarrinhoClientes");
+                name: "CarrinhoCliente");
         }
     }
 }

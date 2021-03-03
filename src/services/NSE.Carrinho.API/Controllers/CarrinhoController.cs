@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace NSE.Carrinho.API.Controllers
 {
-    [Route("api/carrinho")]
     [Authorize]
     public class CarrinhoController : MainController
     {

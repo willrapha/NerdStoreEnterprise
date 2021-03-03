@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace NSE.WebAPI.Core.Usuario
 {
-    public static class ClamisPrincipalExtensions
+    public static class ClaimsPrincipalExtensions
     {
         public static string GetUserId(this ClaimsPrincipal principal)
         {
@@ -12,7 +12,7 @@ namespace NSE.WebAPI.Core.Usuario
                 throw new ArgumentException(nameof(principal));
             }
 
-            var claim = principal.FindFirst("sub");
+            var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
             return claim?.Value;
         }
 

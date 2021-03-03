@@ -15,7 +15,7 @@ namespace NSE.Carrinho.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -36,7 +36,7 @@ namespace NSE.Carrinho.API.Migrations
                     b.HasIndex("ClienteId")
                         .HasName("IDX_Cliente");
 
-                    b.ToTable("CarrinhoClientes");
+                    b.ToTable("CarrinhoCliente");
                 });
 
             modelBuilder.Entity("NSE.Carrinho.API.Model.CarrinhoItem", b =>

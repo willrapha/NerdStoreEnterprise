@@ -10,14 +10,14 @@ using NSE.Carrinho.API.Data;
 namespace NSE.Carrinho.API.Migrations
 {
     [DbContext(typeof(CarrinhoContext))]
-    [Migration("20210216133036_Carrinho")]
-    partial class Carrinho
+    [Migration("20210303021643_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -38,7 +38,7 @@ namespace NSE.Carrinho.API.Migrations
                     b.HasIndex("ClienteId")
                         .HasName("IDX_Cliente");
 
-                    b.ToTable("CarrinhoClientes");
+                    b.ToTable("CarrinhoCliente");
                 });
 
             modelBuilder.Entity("NSE.Carrinho.API.Model.CarrinhoItem", b =>

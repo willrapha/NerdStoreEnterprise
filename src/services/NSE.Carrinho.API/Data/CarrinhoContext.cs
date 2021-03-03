@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using NSE.Carrinho.API.Model;
 using NSE.Core.Data;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,8 +28,6 @@ namespace NSE.Carrinho.API.Data
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
                 property.SetColumnType("varchar(100)");
-
-            modelBuilder.Ignore<ValidationResult>();
 
             // Criando sem o arquivo de configuração, não precisamos do ApplyConfigurationsFromAssembly
             modelBuilder.Entity<CarrinhoCliente>()

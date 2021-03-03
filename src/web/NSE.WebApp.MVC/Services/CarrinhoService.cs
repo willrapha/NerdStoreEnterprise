@@ -19,7 +19,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<CarrinhoViewModel> ObterCarrinho()
         {
-            var response = await _httpClient.GetAsync($"/api/carrinho/");
+            var response = await _httpClient.GetAsync($"/carrinho/");
 
             TratarErrosResponse(response);
 
