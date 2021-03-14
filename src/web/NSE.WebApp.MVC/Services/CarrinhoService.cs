@@ -53,7 +53,7 @@ namespace NSE.WebApp.MVC.Services
 
         public async Task<ResponseResult> RemoverItemCarrinho(Guid produtoId)
         {
-            var response = await _httpClient.DeleteAsync($"/carrinho/produtoId");
+            var response = await _httpClient.DeleteAsync($"/carrinho/{produtoId}");
 
             if (!TratarErrosResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
 
