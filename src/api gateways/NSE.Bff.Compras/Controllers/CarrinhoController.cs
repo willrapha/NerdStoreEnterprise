@@ -63,7 +63,7 @@ namespace NSE.Bff.Compras.Controllers
         {
             var produto = await _catalogoService.ObterPorId(produtoId);
 
-            ValidarItemCarrinho(produto, itemProduto.Quantidade);
+            await ValidarItemCarrinho(produto, itemProduto.Quantidade);
             if (!OperacaoValida()) return CustomResponse();
 
             var resposta = await _carrinhoService.AtualizarItemCarrinho(produtoId, itemProduto);

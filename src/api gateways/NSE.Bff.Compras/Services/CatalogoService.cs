@@ -24,7 +24,7 @@ namespace NSE.Bff.Compras.Services
 
         public async Task<ItemProdutoDTO> ObterPorId(Guid id)
         {
-            var response = await _httpClient.GetAsync($"/catalogo/produtos/{id}");
+            var response = await _httpClient.GetAsync($"api/catalogo/produtos/{id}");
 
             TratarErrosResponse(response);
 
