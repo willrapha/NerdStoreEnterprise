@@ -82,6 +82,20 @@ namespace NSE.Carrinho.API.Controllers
             return CustomResponse();
         }
 
+        [HttpPost]
+        [Route("carrinho/aplicar-voucher")]
+        public async Task<IActionResult> AplicarVoucher(Voucher voucher)
+        {
+            var carrinho = await ObterCarrinhoCliente();
+
+            carrinho.AplicarVoucher(voucher);
+
+            _context.CarrinhoCliente.Update(carrinho);
+
+            await PersistirDados();
+            return CustomResponse();
+        }
+
         // Em uma aplicação simples muita coisa fica na controller
         private void ManipularNovoCarrinho(CarrinhoItem item)
         {
