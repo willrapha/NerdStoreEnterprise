@@ -25,7 +25,7 @@ namespace NSE.Bff.Compras.Services
 
         public async Task<VoucherDTO> ObterVoucherPorCodigo(string codigo)
         {
-            var response = await _httpClient.GetAsync($"/voucher/{codigo}/");
+            var response = await _httpClient.GetAsync($"voucher/{codigo}/");
 
             if (response.StatusCode == HttpStatusCode.NotFound) return null;
 

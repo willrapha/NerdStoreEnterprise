@@ -28,7 +28,7 @@ namespace NSE.Catalogo.API.Controllers
         }
 
         // ClaimsAuthorize - atributo custom
-        [ClaimsAuthorize("Catalogo", "Ler")]
+        // [ClaimsAuthorize("Catalogo", "Ler")]
         [HttpGet("produtos/{id}")]
         public async Task<Produto> ProdutoDetalhe(Guid id)
         {

@@ -15,10 +15,10 @@ namespace NSE.Pedidos.API.Configuration
         {
             // API
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddScoped<IAspNetUser, AspNetUser>();
+            //services.AddScoped<IAspNetUser, AspNetUser>();
 
             // Application
-            services.AddScoped<IMediatorHandler, MediatorHandler>();
+            // services.AddScoped<IMediatorHandler, MediatorHandler>();
             services.AddScoped<IVoucherQueries, VoucherQueries>();
 
             // Data
