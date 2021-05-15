@@ -5,18 +5,18 @@ using System.Net.Http;
 
 namespace NSE.Bff.Compras.Services
 {
-    public interface IPedidoService
+    public interface IPagamentoService
     {
     }
 
-    public class PedidoService : Service, IPedidoService
+    public class PagamentoService : Service, IPagamentoService
     {
         private readonly HttpClient _httpClient;
 
-        public PedidoService(HttpClient httpClient, IOptions<AppServicesSettings> settings)
+        public PagamentoService(HttpClient httpClient, IOptions<AppServicesSettings> settings)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri(settings.Value.PedidoUrl);
+            _httpClient.BaseAddress = new Uri(settings.Value.PagamentoUrl);
         }
     }
 }
