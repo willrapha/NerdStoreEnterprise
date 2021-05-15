@@ -4,6 +4,7 @@ using NSE.Core.Data;
 using NSE.Core.DomainObjects;
 using NSE.Core.Mediator;
 using NSE.Core.Messages;
+using NSE.Pedidos.Domain.Vouchers;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,16 +12,15 @@ namespace NSE.Pedidos.Infra.Data
 {
     public class PedidosContext : DbContext, IUnitOfWork
     {
-        private IMediatorHandler _mediatorHandler;
+        //private readonly IMediatorHandler _mediatorHandler;
 
-        public PedidosContext(DbContextOptions<PedidosContext> options, IMediatorHandler mediatorHandler)
+        public PedidosContext(DbContextOptions<PedidosContext> options/*, IMediatorHandler mediatorHandler*/)
             : base(options)
         {
-            // Desabilitamos pq nossa arquitetura nao depente desses ChangeTracker
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            ChangeTracker.AutoDetectChangesEnabled = false;
-            _mediatorHandler = mediatorHandler;
+            //_mediatorHandler = mediatorHandler;
         }
+
+        public DbSet<Voucher> Vouchers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,7 +41,7 @@ namespace NSE.Pedidos.Infra.Data
         public async Task<bool> Commit()
         {
             var sucesso = await base.SaveChangesAsync() > 0;
-            if (sucesso) await _mediatorHandler.PublicarEventos(this);
+            //if (sucesso) await _mediatorHandler.PublicarEventos(this);
 
             return sucesso;
         }
@@ -50,10 +50,8 @@ namespace NSE.Pedidos.Infra.Data
 
     public static class MediatorExtension
     {
-        // IMediatorHandler - interface nossa criada no projeto Core
         public static async Task PublicarEventos<T>(this IMediatorHandler mediator, T ctx) where T : DbContext
         {
-            // ChangeTracker - memoria das entidades
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()
                 .Where(x => x.Entity.Notificacoes != null && x.Entity.Notificacoes.Any());
@@ -62,18 +60,14 @@ namespace NSE.Pedidos.Infra.Data
                 .SelectMany(x => x.Entity.Notificacoes)
                 .ToList();
 
-            // Limpamos os eventos pois ja estao em memoria
             domainEntities.ToList()
                 .ForEach(entity => entity.Entity.LimparEventos());
 
-            // Para cada evento é criado uma task para publicar o mesmo
             var tasks = domainEvents
-                .Select(async domainEvent =>
-                {
+                .Select(async (domainEvent) => {
                     await mediator.PublicarEvento(domainEvent);
                 });
 
-            // Quanto todas as tarefas estiverem completas finalizamos o metodo
             await Task.WhenAll(tasks);
         }
     }
