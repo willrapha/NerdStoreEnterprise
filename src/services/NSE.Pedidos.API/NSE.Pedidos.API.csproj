@@ -27,9 +27,5 @@
 		<ProjectReference Include="..\NSE.Pedidos.Infra\NSE.Pedidos.Infra.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Application\Events\" />
-	</ItemGroup>
-
 
 </Project>
