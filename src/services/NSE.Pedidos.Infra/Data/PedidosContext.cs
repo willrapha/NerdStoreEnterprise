@@ -14,12 +14,12 @@ namespace NSE.Pedidos.Infra.Data
 {
     public class PedidosContext : DbContext, IUnitOfWork
     {
-        // private readonly IMediatorHandler _mediatorHandler;
+        private readonly IMediatorHandler _mediatorHandler;
 
-        public PedidosContext(DbContextOptions<PedidosContext> options/*, IMediatorHandler mediatorHandler*/)
+        public PedidosContext(DbContextOptions<PedidosContext> options, IMediatorHandler mediatorHandler)
             : base(options)
         {
-            // _mediatorHandler = mediatorHandler;
+            _mediatorHandler = mediatorHandler;
         }
 
         public DbSet<Pedido> Pedidos { get; set; }
@@ -70,7 +70,7 @@ namespace NSE.Pedidos.Infra.Data
 
 
             var sucesso = await base.SaveChangesAsync() > 0;
-            //if (sucesso) await _mediatorHandler.PublicarEventos(this);
+            if (sucesso) await _mediatorHandler.PublicarEventos(this);
 
             return sucesso;
         }
