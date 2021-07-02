@@ -26,15 +26,15 @@ namespace NSE.Pedidos.API.Application.Queries
 
         public async Task<PedidoDTO> ObterUltimoPedido(Guid clienteId)
         {
-            const string sql = @"SELECT 
-                                P.ID AS 'Produto', P.CODIGO, P.VOUCHERUTILIZADO, P.DESCONTO, P.VALORTOTAL, P.PEDIDOSTATUS,
-                                P.LOGRADOURO, P.NUMERO, P.BAIRRO, P.CEP, P.COMPLEMENTO, P.CIDADE, P.ESTADO,
-                                PIT.ID AS 'ProdutoItemId', PIT.PRODUTONOME, PIT.QUANTIDADE, PIT.PRODUTOIMAGEM, PIT.VALORUNITARIO
-                                FROM PEDIDOS P
-                                INNER JOIN PEDIDOITEMS PIT ON P.ID = PIT.PEDIDOID
-                                WHERE P.CLIENTEID = @clientId
-                                AND P.DATACADASTRO between DATEADD(minute, -3, GETDATE()) and DATEADD(minute, 0, GETDATE())
-                                AND P.PEDIDOSTATUS = 1
+            const string sql = @"SELECT
+                                P.ID AS 'ProdutoId', P.CODIGO, P.VOUCHERUTILIZADO, P.DESCONTO, P.VALORTOTAL,P.PEDIDOSTATUS,
+                                P.LOGRADOURO,P.NUMERO, P.BAIRRO, P.CEP, P.COMPLEMENTO, P.CIDADE, P.ESTADO,
+                                PIT.ID AS 'ProdutoItemId',PIT.PRODUTONOME, PIT.QUANTIDADE, PIT.PRODUTOIMAGEM, PIT.VALORUNITARIO 
+                                FROM PEDIDOS P 
+                                INNER JOIN PEDIDOITEMS PIT ON P.ID = PIT.PEDIDOID 
+                                WHERE P.CLIENTEID = @clienteId 
+                                AND P.DATACADASTRO between DATEADD(minute, -3,  GETDATE()) and DATEADD(minute, 0,  GETDATE())
+                                AND P.PEDIDOSTATUS = 1 
                                 ORDER BY P.DATACADASTRO DESC";
 
             // Mapeamento dinamico

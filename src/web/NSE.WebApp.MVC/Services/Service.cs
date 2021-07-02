@@ -1,10 +1,10 @@
-﻿using NSE.Core.Communication;
-using NSE.WebApp.MVC.Extensions;
-using NSE.WebApp.MVC.Models;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using NSE.Core.Communication;
+using NSE.WebApp.MVC.Extensions;
+using NSE.WebApp.MVC.Models;
 
 namespace NSE.WebApp.MVC.Services
 {
@@ -13,14 +13,13 @@ namespace NSE.WebApp.MVC.Services
         protected StringContent ObterConteudo(object dado)
         {
             return new StringContent(
-                 JsonSerializer.Serialize(dado),
-                 Encoding.UTF8,
-                 "application/json");
+                JsonSerializer.Serialize(dado),
+                Encoding.UTF8,
+                "application/json");
         }
 
         protected async Task<T> DeserializarObjetoResponse<T>(HttpResponseMessage responseMessage)
         {
-            // Remover Case Sensitive
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -31,7 +30,7 @@ namespace NSE.WebApp.MVC.Services
 
         protected bool TratarErrosResponse(HttpResponseMessage response)
         {
-            switch (response.StatusCode.GetHashCode())
+            switch ((int)response.StatusCode)
             {
                 case 401:
                 case 403:
@@ -43,9 +42,7 @@ namespace NSE.WebApp.MVC.Services
                     return false;
             }
 
-            // EnsureSuccessStatusCode - garante que retornou um codigo de sucesso caso não é estourado uma Exception
             response.EnsureSuccessStatusCode();
-
             return true;
         }
 

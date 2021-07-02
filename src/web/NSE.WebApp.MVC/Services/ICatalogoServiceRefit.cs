@@ -9,9 +9,9 @@ namespace NSE.WebApp.MVC.Services
     // Refit para consumo de API
     public interface ICatalogoServiceRefit
     {
-        [Get("/api/catalogo/produtos/")]
+        [Get("/catalogo/produtos/")]
         Task<IEnumerable<ProdutoViewModel>> ObterTodos();
-        [Get("/api/catalogo/produtos/{id}")]
+        [Get("/catalogo/produtos/{id}")]
         Task<ProdutoViewModel> ObterPorId(Guid id);
     }
 }

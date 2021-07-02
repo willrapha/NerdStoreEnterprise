@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using NSE.Clientes.API.Application.Commands;
 using NSE.Clientes.API.Models;
 using NSE.Core.Mediator;
 using NSE.WebAPI.Core.Controllers;
 using NSE.WebAPI.Core.Usuario;
-using System.Threading.Tasks;
 
 namespace NSE.Clientes.API.Controllers
 {
-    [Route("api/cliente")]
     public class ClientesController : MainController
     {
         private readonly IClienteRepository _clienteRepository;
@@ -22,7 +22,7 @@ namespace NSE.Clientes.API.Controllers
             _user = user;
         }
 
-        [HttpGet("clientes/endereco")]
+        [HttpGet("cliente/endereco")]
         public async Task<IActionResult> ObterEndereco()
         {
             var endereco = await _clienteRepository.ObterEnderecoPorId(_user.ObterUserId());
@@ -30,13 +30,11 @@ namespace NSE.Clientes.API.Controllers
             return endereco == null ? NotFound() : CustomResponse(endereco);
         }
 
-        [HttpGet("clientes/endereco")]
+        [HttpPost("cliente/endereco")]
         public async Task<IActionResult> AdicionarEndereco(AdicionarEnderecoCommand endereco)
         {
             endereco.ClienteId = _user.ObterUserId();
-
             return CustomResponse(await _mediator.EnviarComando(endereco));
         }
-
     }
 }
