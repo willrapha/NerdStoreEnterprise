@@ -11,3 +11,25 @@
         <!-- All - exibe os erros de model e propriedade os erros de propriedade não são nativos do ModelState -->
     </div>
 }
+
+@{
+    if (TempData["Erros"] is IEnumerable<string> mensagensErro && mensagensErro.Any())
+    {
+        <div style="padding-top: 15px;"></div>
+
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <h3 id="msgRetorno" style="padding-top: 20px">Opa! Algo deu errado :(</h3>
+
+            <ul>
+                @{
+                    foreach (var erro in mensagensErro)
+                    {
+                        <li>@erro</li>
+                    }
+                }
+
+            </ul>
+        </div>
+    }
+}
