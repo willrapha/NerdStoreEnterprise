@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using NSE.Bff.Compras.Extensions;
 using NSE.Bff.Compras.Models;
 using NSE.Core.Communication;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace NSE.Bff.Compras.Services
 {
@@ -42,7 +42,7 @@ namespace NSE.Bff.Compras.Services
 
             var response = await _httpClient.PostAsync("/carrinho/", itemContent);
 
-            if(!TratarErrosResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
+            if (!TratarErrosResponse(response)) return await DeserializarObjetoResponse<ResponseResult>(response);
 
             return RetornoOk();
         }

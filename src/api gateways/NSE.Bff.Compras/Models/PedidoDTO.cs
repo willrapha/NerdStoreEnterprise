@@ -1,26 +1,36 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using NSE.Core.Validation;
 
-namespace NSE.WebApp.MVC.Models
+namespace NSE.Bff.Compras.Models
 {
-    public class PedidoTransacaoViewModel
+    public class PedidoDTO
     {
         #region Pedido
 
+        public int Codigo { get; set; }
+        // Autorizado = 1,
+        // Pago = 2,
+        // Recusado = 3,
+        // Entregue = 4,
+        // Cancelado = 5
+        public int Status { get; set; }
+        public DateTime Data { get; set; }
         public decimal ValorTotal { get; set; }
+
         public decimal Desconto { get; set; }
         public string VoucherCodigo { get; set; }
         public bool VoucherUtilizado { get; set; }
 
-        public List<ItemCarrinhoViewModel> Itens { get; set; } = new List<ItemCarrinhoViewModel>();
+        public List<ItemCarrinhoDTO> PedidoItems { get; set; }
 
         #endregion
 
         #region Endereco
 
-        public EnderecoViewModel Endereco { get; set; }
+        public EnderecoDTO Endereco { get; set; }
 
         #endregion
 
