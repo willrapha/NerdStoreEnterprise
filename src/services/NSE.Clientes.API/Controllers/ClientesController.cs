@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NSE.Clientes.API.Application.Commands;
 using NSE.Clientes.API.Models;
 using NSE.Core.Mediator;
 using NSE.WebAPI.Core.Controllers;
@@ -32,7 +33,7 @@ namespace NSE.Clientes.API.Controllers
         [HttpGet("clientes/endereco")]
         public async Task<IActionResult> AdicionarEndereco(AdicionarEnderecoCommand endereco)
         {
-            var endereco.ClienteId = _user.ObterUserId();
+            endereco.ClienteId = _user.ObterUserId();
 
             return CustomResponse(await _mediator.EnviarComando(endereco));
         }
