@@ -1,27 +1,27 @@
 ﻿using FluentValidation.Results;
-using MediatR;
 using NSE.Core.Messages;
 using System.Threading.Tasks;
+using MediatR;
 
 namespace NSE.Core.Mediator
 {
-    // Abastracao concreta para o Mediator
     public class MediatorHandler : IMediatorHandler
     {
-        private readonly IMediator _mediador;
-        public MediatorHandler(IMediator mediador)
+        private readonly IMediator _mediator;
+
+        public MediatorHandler(IMediator mediator)
         {
-            _mediador = mediador;
+            _mediator = mediator;
         }
 
         public async Task<ValidationResult> EnviarComando<T>(T comando) where T : Command
         {
-            return await _mediador.Send(comando);
+            return await _mediator.Send(comando);
         }
 
         public async Task PublicarEvento<T>(T evento) where T : Event
         {
-            await _mediador.Publish(evento);
+            await _mediator.Publish(evento);
         }
     }
 }

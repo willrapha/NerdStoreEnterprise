@@ -1,14 +1,15 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace NSE.Carrinho.API.Model
 {
     public class CarrinhoCliente
     {
         internal const int MAX_QUANTIDADE_ITEM = 5;
+
         public Guid Id { get; set; }
         public Guid ClienteId { get; set; }
         public decimal ValorTotal { get; set; }
@@ -17,6 +18,7 @@ namespace NSE.Carrinho.API.Model
 
         public bool VoucherUtilizado { get; set; }
         public decimal Desconto { get; set; }
+
         public Voucher Voucher { get; set; }
 
         public CarrinhoCliente(Guid clienteId)
@@ -47,7 +49,7 @@ namespace NSE.Carrinho.API.Model
             decimal desconto = 0;
             var valor = ValorTotal;
 
-            if(Voucher.TipoDesconto == TipoDescontoVoucher.Porcentagem)
+            if (Voucher.TipoDesconto == TipoDescontoVoucher.Porcentagem)
             {
                 if (Voucher.Percentual.HasValue)
                 {
@@ -115,16 +117,14 @@ namespace NSE.Carrinho.API.Model
 
         internal void RemoverItem(CarrinhoItem item)
         {
-            var itemExistente = ObterPorProdutoId(item.ProdutoId);
-            Itens.Remove(itemExistente);
-
+            Itens.Remove(ObterPorProdutoId(item.ProdutoId));
             CalcularValorCarrinho();
         }
 
         internal bool EhValido()
         {
-            var erros = Itens.SelectMany(i => new CarrinhoItem.ItemCarrinhoValidation().Validate(i).Errors).ToList(); // Itens
-            erros.AddRange(new CarrinhoClienteValidation().Validate(this).Errors); // Carrinho
+            var erros = Itens.SelectMany(i => new CarrinhoItem.ItemCarrinhoValidation().Validate(i).Errors).ToList();
+            erros.AddRange(new CarrinhoClienteValidation().Validate(this).Errors);
             ValidationResult = new ValidationResult(erros);
 
             return ValidationResult.IsValid;
@@ -149,3 +149,5 @@ namespace NSE.Carrinho.API.Model
         }
     }
 }
+
+

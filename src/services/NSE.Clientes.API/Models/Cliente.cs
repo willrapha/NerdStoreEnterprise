@@ -1,5 +1,5 @@
-﻿using NSE.Core.DomainObjects;
-using System;
+﻿using System;
+using NSE.Core.DomainObjects;
 
 namespace NSE.Clientes.API.Models
 {
@@ -11,14 +11,14 @@ namespace NSE.Clientes.API.Models
         public bool Excluido { get; private set; }
         public Endereco Endereco { get; private set; }
 
-        // EF Construtor
+        // EF Relation
         protected Cliente() { }
 
         public Cliente(Guid id, string nome, string email, string cpf)
         {
             Id = id;
             Nome = nome;
-            Email = new Email(email); // Nesse momento se chegarmos até aqui sem validar o email ou cpf será soltado uma exception em ultimo caso
+            Email = new Email(email);
             Cpf = new Cpf(cpf);
             Excluido = false;
         }

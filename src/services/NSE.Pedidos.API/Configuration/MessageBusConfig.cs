@@ -2,17 +2,18 @@
 using Microsoft.Extensions.DependencyInjection;
 using NSE.Core.Utils;
 using NSE.MessageBus;
+using NSE.Pedidos.API.Services;
 
 namespace NSE.Pedidos.API.Configuration
 {
     public static class MessageBusConfig
     {
-        public static void AddMessageBusConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static void AddMessageBusConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            // AddHostedService - o ciclo da injeção de dependencia funciona como Singleton - trabalha como um só no pipeline do aspnet
-            // E uma vez que temos um instancia de um objeto singleton nao podemos injetar nada que seja diferente de singleton nessa classe
-            // MessageBus - Bus
-            services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"));
+            services.AddMessageBus(configuration.GetMessageQueueConnection("MessageBus"))
+                .AddHostedService<PedidoOrquestradorIntegrationHandler>()
+                .AddHostedService<PedidoIntegrationHandler>();
         }
     }
 }

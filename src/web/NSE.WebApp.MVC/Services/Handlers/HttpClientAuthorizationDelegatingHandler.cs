@@ -1,14 +1,12 @@
-﻿using NSE.WebAPI.Core.Usuario;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using NSE.WebAPI.Core.Usuario;
 
 namespace NSE.WebApp.MVC.Services.Handlers
 {
-    // Qualquer resquest será passado por aqui
-    // DelegatingHandlers pode ser utilizado para interceptar qualquer requisição e fazer uma validação por exemplo no nosso caso vamos adicionar o token
     public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
         private readonly IAspNetUser _user;
@@ -18,7 +16,6 @@ namespace NSE.WebApp.MVC.Services.Handlers
             _user = user;
         }
 
-        // Estamos sobrescrevendo o SendAsync do HttpClient
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var authorizationHeader = _user.ObterHttpContext().Request.Headers["Authorization"];

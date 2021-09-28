@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NSE.WebApp.MVC.Models;
 using NSE.WebApp.MVC.Services;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace NSE.WebApp.MVC.Controllers
 {
@@ -15,7 +9,8 @@ namespace NSE.WebApp.MVC.Controllers
     {
         private readonly IAutenticacaoService _autenticacaoService;
 
-        public IdentidadeController(IAutenticacaoService autenticacaoService)
+        public IdentidadeController(
+            IAutenticacaoService autenticacaoService)
         {
             _autenticacaoService = autenticacaoService;
         }
@@ -37,7 +32,7 @@ namespace NSE.WebApp.MVC.Controllers
 
             if (ResponsePossuiErros(resposta.ResponseResult)) return View(usuarioRegistro);
 
-            await RealizarLogin(resposta);
+            await _autenticacaoService.RealizarLogin(resposta);
 
             return RedirectToAction("Index", "Catalogo");
         }
@@ -61,9 +56,9 @@ namespace NSE.WebApp.MVC.Controllers
 
             if (ResponsePossuiErros(resposta.ResponseResult)) return View(usuarioLogin);
 
-            await RealizarLogin(resposta);
+            await _autenticacaoService.RealizarLogin(resposta);
 
-            if(string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Catalogo");
+            if (string.IsNullOrEmpty(returnUrl)) return RedirectToAction("Index", "Catalogo");
 
             return LocalRedirect(returnUrl);
         }
@@ -72,40 +67,8 @@ namespace NSE.WebApp.MVC.Controllers
         [Route("sair")]
         public async Task<IActionResult> Logout()
         {
-            // Zera o Cookie da aplicação
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
+            await _autenticacaoService.Logout();
             return RedirectToAction("Index", "Catalogo");
-        }
-
-        private async Task RealizarLogin(UsuarioRespostaLogin resposta)
-        {
-            var token = ObterTokenFormatado(resposta.AccessToken);
-
-            var claims = new List<Claim>();
-            claims.Add(new Claim("JWT", resposta.AccessToken));
-            claims.AddRange(token.Claims);
-
-            // Gerando os claims dentro do Cookie
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60),
-                IsPersistent = true // necessario para durar pro multiplos requests
-            };
-
-
-            // SignInAsync - metodo do proprio asnetcore para login
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme, // Autenticacao via Cookie
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties); // propriedades do Cookie
-        }
-
-        private static JwtSecurityToken ObterTokenFormatado(string jwtToken)
-        {
-            return new JwtSecurityTokenHandler().ReadToken(jwtToken) as JwtSecurityToken;
         }
     }
 }

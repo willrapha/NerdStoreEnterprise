@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
-using System.Security.Claims;
 
 namespace NSE.WebAPI.Core.Identidade
 {
-    // Validar as claims
     public class CustomAuthorization
     {
         public static bool ValidarClaimsUsuario(HttpContext context, string claimName, string claimValue)
@@ -14,11 +13,10 @@ namespace NSE.WebAPI.Core.Identidade
             return context.User.Identity.IsAuthenticated &&
                    context.User.Claims.Any(c => c.Type == claimName && c.Value.Contains(claimValue));
         }
+
     }
 
-    // Atributo para decorar um metodo
-    // Criamos esse atributo como base nesse filtro 'RequisitoClaimFilter'
-    public class ClaimsAuthorizeAttribute: TypeFilterAttribute
+    public class ClaimsAuthorizeAttribute : TypeFilterAttribute
     {
         public ClaimsAuthorizeAttribute(string claimName, string claimValue) : base(typeof(RequisitoClaimFilter))
         {
@@ -26,8 +24,6 @@ namespace NSE.WebAPI.Core.Identidade
         }
     }
 
-    // Implementamos o filtro de autorização do proprio aspnet 'IAuthorizationFilter'
-    // O aspnet possui um filtro de autorizacao nativo porem ele trabalha com policies e é muito moroso de mexer por isso implementamos esse custom
     public class RequisitoClaimFilter : IAuthorizationFilter
     {
         private readonly Claim _claim;
@@ -45,7 +41,7 @@ namespace NSE.WebAPI.Core.Identidade
                 return;
             }
 
-            if(!CustomAuthorization.ValidarClaimsUsuario(context.HttpContext, _claim.Type, _claim.Value))
+            if (!CustomAuthorization.ValidarClaimsUsuario(context.HttpContext, _claim.Type, _claim.Value))
             {
                 context.Result = new StatusCodeResult(403);
             }

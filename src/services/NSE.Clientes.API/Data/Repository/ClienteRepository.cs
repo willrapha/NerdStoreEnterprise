@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NSE.Clientes.API.Models;
-using NSE.Core.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using NSE.Clientes.API.Models;
+using NSE.Core.Data;
 
 namespace NSE.Clientes.API.Data.Repository
 {

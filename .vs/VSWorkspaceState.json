@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\services",
+    "\\src\\services\\NSE.Catalogo.API\\Configuration",
+    "\\src\\services\\NSE.Catalogo.API\\Controllers",
+    "\\src\\services\\NSE.Catalogo.API\\Data",
+    "\\src\\services\\NSE.Catalogo.API\\Models",
+    "\\src\\services\\NSE.Catalogo.API\\Properties"
+  ],
+  "SelectedNode": "\\src\\services\\NSE.Clientes.API",
+  "PreviewInSolutionExplorer": false
+}

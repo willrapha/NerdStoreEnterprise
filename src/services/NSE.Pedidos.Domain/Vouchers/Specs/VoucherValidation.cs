@@ -1,6 +1,6 @@
-﻿using NSE.Core.Specification;
+﻿using NetDevPack.Specification;
 
-namespace NSE.Pedidos.Domain.Vouchers.Specs
+namespace NSE.Pedidos.Domain.Specs
 {
     public class VoucherValidation : SpecValidator<Voucher>
     {

@@ -1,34 +1,32 @@
-﻿using EasyNetQ;
+﻿using System;
+using System.Threading.Tasks;
+using EasyNetQ;
 using NSE.Core.Messages.Integration;
 using Polly;
 using RabbitMQ.Client.Exceptions;
-using System;
-using System.Threading.Tasks;
 
 namespace NSE.MessageBus
 {
-    // Nosso MessageBus que abstrai o EasyNetQ e o EasyNetQ abstrai a proprio drive do rabbitMQ para dotnet que abstrai a propria conexao que poderiamos fazer na 
-    // mao com o rabbitMQ, essa classe facilita assim trabalharmos com outros frameworks independente do EasyNetQ
     public class MessageBus : IMessageBus
     {
         private IBus _bus;
-        private IAdvancedBus _advancedBus; // Recursos que a interface IBus não oferece, utilizado para recuperação de falhas entre outros
+        private IAdvancedBus _advancedBus;
+
         private readonly string _connectionString;
 
         public MessageBus(string connectionString)
         {
             _connectionString = connectionString;
-            TryConnect(); // Conexao
+            TryConnect();
         }
 
         public bool IsConnected => _bus?.IsConnected ?? false;
-
         public IAdvancedBus AdvancedBus => _bus?.Advanced;
 
         public void Publish<T>(T message) where T : IntegrationEvent
         {
             TryConnect();
-            _bus.Publish(message); // Chamamos o proprio metodo publish do EasyNetQ, porém com essa camada a mais de cuidado
+            _bus.Publish(message);
         }
 
         public async Task PublishAsync<T>(T message) where T : IntegrationEvent
@@ -36,6 +34,7 @@ namespace NSE.MessageBus
             TryConnect();
             await _bus.PublishAsync(message);
         }
+
         public void Subscribe<T>(string subscriptionId, Action<T> onMessage) where T : class
         {
             TryConnect();
@@ -48,8 +47,7 @@ namespace NSE.MessageBus
             _bus.SubscribeAsync(subscriptionId, onMessage);
         }
 
-        public TResponse Request<TRequest, TResponse>(TRequest request)
-            where TRequest : IntegrationEvent
+        public TResponse Request<TRequest, TResponse>(TRequest request) where TRequest : IntegrationEvent
             where TResponse : ResponseMessage
         {
             TryConnect();
@@ -57,24 +55,21 @@ namespace NSE.MessageBus
         }
 
         public async Task<TResponse> RequestAsync<TRequest, TResponse>(TRequest request)
-            where TRequest : IntegrationEvent
-            where TResponse : ResponseMessage
+            where TRequest : IntegrationEvent where TResponse : ResponseMessage
         {
             TryConnect();
             return await _bus.RequestAsync<TRequest, TResponse>(request);
         }
 
         public IDisposable Respond<TRequest, TResponse>(Func<TRequest, TResponse> responder)
-            where TRequest : IntegrationEvent
-            where TResponse : ResponseMessage
+            where TRequest : IntegrationEvent where TResponse : ResponseMessage
         {
             TryConnect();
-            return _bus.Respond<TRequest, TResponse>(responder);
+            return _bus.Respond(responder);
         }
 
         public IDisposable RespondAsync<TRequest, TResponse>(Func<TRequest, Task<TResponse>> responder)
-            where TRequest : IntegrationEvent
-            where TResponse : ResponseMessage
+            where TRequest : IntegrationEvent where TResponse : ResponseMessage
         {
             TryConnect();
             return _bus.RespondAsync(responder);
@@ -82,29 +77,26 @@ namespace NSE.MessageBus
 
         private void TryConnect()
         {
-            if (IsConnected) return;
+            if(IsConnected) return;
 
-            // EasyNetQException - descrita na documentação do EasyNetQ
-            // BrokerUnreachableException - descrita na documentação do rabbitMQ
-            var policy = Policy.Handle<EasyNetQException>() // Poly que utilizamos no front-end
+            var policy = Policy.Handle<EasyNetQException>()
                 .Or<BrokerUnreachableException>()
                 .WaitAndRetry(3, retryAttempt =>
-                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))); // Pra cada tentativas fazemos o exponencial de 2 sobre tentativa
+                    TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
             policy.Execute(() =>
-            { 
+            {
                 _bus = RabbitHutch.CreateBus(_connectionString);
-                _advancedBus = _bus.Advanced; // Precisamos da interface pois nao conseguimos trabalhar diretamente com o _bus.Advanced
-                _advancedBus.Disconnected += OnDisconnect; // Assim que for desconectado a conexao com o Bus de imediato tentamos conectar novamente
+                _advancedBus = _bus.Advanced;
+                _advancedBus.Disconnected += OnDisconnect;
             });
         }
 
-        // Padrao de assinatura de um EventHandler
         private void OnDisconnect(object s, EventArgs e)
         {
             var policy = Policy.Handle<EasyNetQException>()
                 .Or<BrokerUnreachableException>()
-                .RetryForever(); // Sempre tentara reconectar a mensageria
+                .RetryForever();
 
             policy.Execute(TryConnect);
         }

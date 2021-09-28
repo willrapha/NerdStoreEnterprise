@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace NSE.WebAPI.Core.Usuario
 {
-
     public class AspNetUser : IAspNetUser
     {
-        // Acessa o contexto da nossa requisição http
         private readonly IHttpContextAccessor _accessor;
 
         public AspNetUser(IHttpContextAccessor accessor)
@@ -25,12 +23,17 @@ namespace NSE.WebAPI.Core.Usuario
 
         public string ObterUserEmail()
         {
-            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserEmail() : string.Empty;
+            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserEmail() : "";
         }
 
         public string ObterUserToken()
         {
-            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserToken() : string.Empty;
+            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserToken() : "";
+        }
+
+        public string ObterUserRefreshToken()
+        {
+            return EstaAutenticado() ? _accessor.HttpContext.User.GetUserRefreshToken() : "";
         }
 
         public bool EstaAutenticado()

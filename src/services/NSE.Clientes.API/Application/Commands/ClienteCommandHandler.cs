@@ -1,15 +1,14 @@
 ﻿using FluentValidation.Results;
 using MediatR;
+using System.Threading;
+using System.Threading.Tasks;
 using NSE.Clientes.API.Application.Events;
 using NSE.Clientes.API.Models;
 using NSE.Core.Messages;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NSE.Clientes.API.Application.Commands
 {
-    // Manipulador do nosso comando 'RegistrarClienteCommand'
-    public class ClienteCommandHandler : CommandHandler, 
+    public class ClienteCommandHandler : CommandHandler,
         IRequestHandler<RegistrarClienteCommand, ValidationResult>,
         IRequestHandler<AdicionarEnderecoCommand, ValidationResult>
     {
@@ -19,8 +18,7 @@ namespace NSE.Clientes.API.Application.Commands
         {
             _clienteRepository = clienteRepository;
         }
-
-        // cancellationToken - padrao para controlar a execução da tread
+        
         public async Task<ValidationResult> Handle(RegistrarClienteCommand message, CancellationToken cancellationToken)
         {
             if (!message.EhValido()) return message.ValidationResult;
@@ -37,8 +35,6 @@ namespace NSE.Clientes.API.Application.Commands
 
             _clienteRepository.Adicionar(cliente);
 
-            // A execucao do evento é feita apos o commit em nossa classe de contexto
-            // evento reference a algo que aconteceu no passado
             cliente.AdicionarEvento(new ClienteRegistradoEvent(message.Id, message.Nome, message.Email, message.Cpf));
 
             return await PersistirDados(_clienteRepository.UnitOfWork);
@@ -48,8 +44,7 @@ namespace NSE.Clientes.API.Application.Commands
         {
             if (!message.EhValido()) return message.ValidationResult;
 
-            var endereco = new Endereco(message.Logradouro, message.Numero, message.Complemento, 
-                message.Bairro, message.Cep, message.Cidade, message.Estado, message.ClienteId);
+            var endereco = new Endereco(message.Logradouro, message.Numero, message.Complemento, message.Bairro, message.Cep, message.Cidade, message.Estado, message.ClienteId);
             _clienteRepository.AdicionarEndereco(endereco);
 
             return await PersistirDados(_clienteRepository.UnitOfWork);

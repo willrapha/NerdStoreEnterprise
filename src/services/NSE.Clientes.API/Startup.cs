@@ -15,7 +15,6 @@ namespace NSE.Clientes.API
 
         public Startup(IHostEnvironment hostEnvironment)
         {
-            // Criando nosso Configuration
             var builder = new ConfigurationBuilder()
                 .SetBasePath(hostEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)
@@ -33,16 +32,22 @@ namespace NSE.Clientes.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApiConfiguration(Configuration);
+
             services.AddJwtConfiguration(Configuration);
+
             services.AddSwaggerConfiguration();
-            services.AddMediatR(typeof(Startup)); // necessario instalar pacote <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
+
+            services.AddMediatR(typeof(Startup));
+
             services.RegisterServices();
+
             services.AddMessageBusConfiguration(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSwaggerConfiguration();
+
             app.UseApiConfiguration(env);
         }
     }

@@ -22,7 +22,7 @@ namespace NSE.WebApp.MVC.Controllers
         {
             var response = await _clienteService.AdicionarEndereco(endereco);
 
-            if (ResponsePossuiErros(response)) TempData["Erros"] =
+            if (ResponsePossuiErros(response)) TempData["Erros"] = 
                 ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
 
             return RedirectToAction("EnderecoEntrega", "Pedido");

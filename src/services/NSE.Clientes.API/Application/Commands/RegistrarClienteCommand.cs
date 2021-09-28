@@ -1,10 +1,9 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using NSE.Core.Messages;
-using System;
 
 namespace NSE.Clientes.API.Application.Commands
 {
-    // Comandos vao efetivar algo no banco, um comando tem que herdar de um command
     public class RegistrarClienteCommand : Command
     {
         public Guid Id { get; private set; }
@@ -27,7 +26,6 @@ namespace NSE.Clientes.API.Application.Commands
             return ValidationResult.IsValid;
         }
 
-        // Classe aninhada de validação, uma sub responsabilidade
         public class RegistrarClienteValidation : AbstractValidator<RegistrarClienteCommand>
         {
             public RegistrarClienteValidation()
@@ -41,7 +39,7 @@ namespace NSE.Clientes.API.Application.Commands
                     .WithMessage("O nome do cliente não foi informado");
 
                 RuleFor(c => c.Cpf)
-                    .Must(TerCpfValido) // Action
+                    .Must(TerCpfValido)
                     .WithMessage("O CPF informado não é válido.");
 
                 RuleFor(c => c.Email)
@@ -60,6 +58,4 @@ namespace NSE.Clientes.API.Application.Commands
             }
         }
     }
-
-    
 }

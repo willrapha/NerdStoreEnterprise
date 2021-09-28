@@ -1,18 +1,15 @@
-﻿using FluentValidation.Results;
+﻿using System.Linq;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
 using NSE.Carrinho.API.Model;
-using NSE.Core.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NSE.Carrinho.API.Data
 {
-    public class CarrinhoContext : DbContext, IUnitOfWork
+    public sealed class CarrinhoContext : DbContext
     {
         public CarrinhoContext(DbContextOptions<CarrinhoContext> options)
             : base(options)
         {
-            // Desabilitamos pq nossa arquitetura nao depente desses ChangeTracker
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
         }
@@ -22,34 +19,32 @@ namespace NSE.Carrinho.API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Ignore<ValidationResult>();
-
-            // Setar colunas string que nao foram mapeadas para varchar(100)
             foreach (var property in modelBuilder.Model.GetEntityTypes().SelectMany(
                 e => e.GetProperties().Where(p => p.ClrType == typeof(string))))
                 property.SetColumnType("varchar(100)");
 
-            // Criando sem o arquivo de configuração, não precisamos do ApplyConfigurationsFromAssembly
+            modelBuilder.Ignore<ValidationResult>();
+
             modelBuilder.Entity<CarrinhoCliente>()
                 .HasIndex(c => c.ClienteId)
                 .HasName("IDX_Cliente");
 
             modelBuilder.Entity<CarrinhoCliente>()
                 .Ignore(c => c.Voucher)
-                .OwnsOne(c => c.Voucher, v => // OwnsOne - Colunas que vem de uma propriedade filha
+                .OwnsOne(c => c.Voucher, v =>
                 {
                     v.Property(vc => vc.Codigo)
-                    .HasColumnName("VoucherCodigo")
-                    .HasColumnType("varchar(50)");
+                        .HasColumnName("VoucherCodigo")
+                        .HasColumnType("varchar(50)");
 
                     v.Property(vc => vc.TipoDesconto)
-                    .HasColumnName("TipoDesconto");
+                        .HasColumnName("TipoDesconto");
 
                     v.Property(vc => vc.Percentual)
-                    .HasColumnName("Percentual");
+                        .HasColumnName("Percentual");
 
                     v.Property(vc => vc.ValorDesconto)
-                    .HasColumnName("ValorDesconto");
+                        .HasColumnName("ValorDesconto");
                 });
 
             modelBuilder.Entity<CarrinhoCliente>()
@@ -57,16 +52,8 @@ namespace NSE.Carrinho.API.Data
                 .WithOne(i => i.CarrinhoCliente)
                 .HasForeignKey(c => c.CarrinhoId);
 
-            // Onde houver relacionamento iremos desligar o delete cascade
-            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
-                relationship.DeleteBehavior = DeleteBehavior.Cascade;
-        }
-
-        public async Task<bool> Commit()
-        {
-            var sucesso = await base.SaveChangesAsync() > 0;
-
-            return sucesso;
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys())) relationship.DeleteBehavior = DeleteBehavior.Cascade;
         }
     }
 }

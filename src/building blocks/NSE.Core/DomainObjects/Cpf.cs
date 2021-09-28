@@ -7,12 +7,11 @@ namespace NSE.Core.DomainObjects
         public const int CpfMaxLength = 11;
         public string Numero { get; private set; }
 
-        // Construtor do EF
+        //Construtor do EntityFramework
         protected Cpf() { }
 
         public Cpf(string numero)
         {
-            // Nao devemos soltar exception mais em ultimo caso de chegarmos até a entidade com um cpf invalido soltaremos um exception
             if (!Validar(numero)) throw new DomainException("CPF inválido");
             Numero = numero;
         }

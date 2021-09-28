@@ -1,28 +1,24 @@
-﻿using NSE.Core.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using NSE.Core.Messages;
 
 namespace NSE.Core.DomainObjects
 {
-    // Entidade rica - ela carrega eventos, notificacoes o que precisarmos
-    // Ela representa nao so a entidade mais tbm as validações referentes a ela
     public abstract class Entity
     {
         public Guid Id { get; set; }
 
-        public Entity()
+        protected Entity()
         {
             Id = Guid.NewGuid();
         }
 
         private List<Event> _notificacoes;
-
-        // Apenas leitura das nossas notificacoes
         public IReadOnlyCollection<Event> Notificacoes => _notificacoes?.AsReadOnly();
 
         public void AdicionarEvento(Event evento)
         {
-            _notificacoes = _notificacoes ?? new List<Event>(); // se estiver nula instanciamos a lista
+            _notificacoes = _notificacoes ?? new List<Event>();
             _notificacoes.Add(evento);
         }
 
@@ -37,7 +33,7 @@ namespace NSE.Core.DomainObjects
         }
 
         #region Comparações
-        // Comparar classes de mesma instancia
+
         public override bool Equals(object obj)
         {
             var compareTo = obj as Entity;
@@ -64,7 +60,6 @@ namespace NSE.Core.DomainObjects
             return !(a == b);
         }
 
-        // Codigo da instancia do objeto "numero unico"
         public override int GetHashCode()
         {
             return (GetType().GetHashCode() * 907) + Id.GetHashCode();
@@ -74,6 +69,7 @@ namespace NSE.Core.DomainObjects
         {
             return $"{GetType().Name} [Id={Id}]";
         }
+
         #endregion
     }
 }

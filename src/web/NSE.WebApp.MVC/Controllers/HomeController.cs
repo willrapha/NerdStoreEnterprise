@@ -11,19 +11,20 @@ namespace NSE.WebApp.MVC.Controllers
             var modelErro = new ErrorViewModel
             {
                 Mensagem = "O sistema está temporariamente indisponível, isto pode ocorrer em momentos de sobrecarga de usuários.",
-                Titulo = "Sistema indisponível",
+                Titulo = "Sistema indisponível.",
                 ErroCode = 500
             };
 
             return View("Error", modelErro);
         }
 
+
         [Route("erro/{id:length(3,3)}")]
         public IActionResult Error(int id)
         {
             var modelErro = new ErrorViewModel();
 
-            if(id == 500)
+            if (id == 500)
             {
                 modelErro.Mensagem = "Ocorreu um erro! Tente novamente mais tarde ou contate nosso suporte.";
                 modelErro.Titulo = "Ocorreu um erro!";
@@ -31,7 +32,8 @@ namespace NSE.WebApp.MVC.Controllers
             }
             else if (id == 404)
             {
-                modelErro.Mensagem = "A página que está procurando nâo existe! <br />Em caso de dúvidas entre em contato com o nosso suporte";
+                modelErro.Mensagem =
+                    "A página que está procurando não existe! <br />Em caso de dúvidas entre em contato com nosso suporte";
                 modelErro.Titulo = "Ops! Página não encontrada.";
                 modelErro.ErroCode = id;
             }

@@ -1,5 +1,5 @@
-﻿using NSE.Core.Messages;
-using System;
+﻿using System;
+using NSE.Core.Messages;
 
 namespace NSE.Clientes.API.Application.Events
 {

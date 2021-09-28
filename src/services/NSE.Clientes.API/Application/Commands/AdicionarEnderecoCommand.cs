@@ -1,9 +1,6 @@
-﻿using FluentValidation;
+﻿using System;
+using FluentValidation;
 using NSE.Core.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NSE.Clientes.API.Application.Commands
 {
@@ -20,12 +17,12 @@ namespace NSE.Clientes.API.Application.Commands
 
         public AdicionarEnderecoCommand()
         {
-
         }
 
-        public AdicionarEnderecoCommand(Guid clienteId, string logradouro, string numero, string complemento, 
+        public AdicionarEnderecoCommand(Guid clienteId, string logradouro, string numero, string complemento,
             string bairro, string cep, string cidade, string estado)
         {
+            AggregateId = clienteId;
             ClienteId = clienteId;
             Logradouro = logradouro;
             Numero = numero;
@@ -64,7 +61,7 @@ namespace NSE.Clientes.API.Application.Commands
 
                 RuleFor(c => c.Cidade)
                     .NotEmpty()
-                    .WithMessage("Informe a Cidade");
+                    .WithMessage("Informe o Cidade");
 
                 RuleFor(c => c.Estado)
                     .NotEmpty()

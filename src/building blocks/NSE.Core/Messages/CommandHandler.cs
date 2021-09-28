@@ -1,6 +1,6 @@
-﻿using FluentValidation.Results;
+﻿using System.Threading.Tasks;
+using FluentValidation.Results;
 using NSE.Core.Data;
-using System.Threading.Tasks;
 
 namespace NSE.Core.Messages
 {

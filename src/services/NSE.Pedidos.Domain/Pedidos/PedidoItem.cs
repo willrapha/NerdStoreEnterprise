@@ -1,5 +1,5 @@
-﻿using NSE.Core.DomainObjects;
-using System;
+﻿using System;
+using NSE.Core.DomainObjects;
 
 namespace NSE.Pedidos.Domain.Pedidos
 {
@@ -15,7 +15,8 @@ namespace NSE.Pedidos.Domain.Pedidos
         // EF Rel.
         public Pedido Pedido { get; set; }
 
-        public PedidoItem(Guid produtoId, string produtoNome, int quantidade, decimal valorUnitario, string produtoImagem = null)
+        public PedidoItem(Guid produtoId, string produtoNome, int quantidade, 
+            decimal valorUnitario, string produtoImagem = null)
         {
             ProdutoId = produtoId;
             ProdutoNome = produtoNome;

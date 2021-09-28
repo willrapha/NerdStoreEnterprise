@@ -2,7 +2,6 @@
 
 namespace NSE.Core.DomainObjects
 {
-    // Exception Custom para Dominio
     public class DomainException : Exception
     {
         public DomainException()
@@ -11,7 +10,7 @@ namespace NSE.Core.DomainObjects
         public DomainException(string message) : base(message)
         { }
 
-        public DomainException(string message, Exception innerException) : base (message, innerException)
+        public DomainException(string message, Exception innerException) : base(message, innerException)
         { }
     }
 }

@@ -1,7 +1,7 @@
-﻿using NSE.Core.Data;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using NSE.Core.Data;
 
-namespace NSE.Pedidos.Domain.Vouchers
+namespace NSE.Pedidos.Domain
 {
     public interface IVoucherRepository : IRepository<Voucher>
     {

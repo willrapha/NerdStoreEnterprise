@@ -3,7 +3,6 @@ using System.Net;
 
 namespace NSE.WebApp.MVC.Extensions
 {
-    // Boa pratica customizar execções que conheçemos
     public class CustomHttpRequestException : Exception
     {
         public HttpStatusCode StatusCode;

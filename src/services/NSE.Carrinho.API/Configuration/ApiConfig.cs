@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSE.Carrinho.API.Data;
+using NSE.Carrinho.API.Services.gRPC;
 using NSE.WebAPI.Core.Identidade;
 
 namespace NSE.Carrinho.API.Configuration
@@ -18,7 +19,8 @@ namespace NSE.Carrinho.API.Configuration
 
             services.AddControllers();
 
-            // Liberando Cors Aplicação
+            services.AddGrpc();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("Total",
@@ -48,6 +50,7 @@ namespace NSE.Carrinho.API.Configuration
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<CarrinhoGrpcService>().RequireCors("Total");
             });
         }
     }

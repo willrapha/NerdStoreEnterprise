@@ -91,7 +91,7 @@ namespace NSE.Pedidos.Infra.Migrations
                     b.ToTable("PedidoItems");
                 });
 
-            modelBuilder.Entity("NSE.Pedidos.Domain.Vouchers.Voucher", b =>
+            modelBuilder.Entity("NSE.Pedidos.Domain.Voucher", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -135,7 +135,7 @@ namespace NSE.Pedidos.Infra.Migrations
 
             modelBuilder.Entity("NSE.Pedidos.Domain.Pedidos.Pedido", b =>
                 {
-                    b.HasOne("NSE.Pedidos.Domain.Vouchers.Voucher", "Voucher")
+                    b.HasOne("NSE.Pedidos.Domain.Voucher", "Voucher")
                         .WithMany()
                         .HasForeignKey("VoucherId");
 

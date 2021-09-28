@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NetDevPack.Security.JwtSigningCredentials.AspNetCore;
+using NSE.Identidade.API.Services;
 using NSE.WebAPI.Core.Identidade;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using NSE.WebAPI.Core.Usuario;
 
 namespace NSE.Identidade.API.Configuration
 {
@@ -14,8 +13,10 @@ namespace NSE.Identidade.API.Configuration
     {
         public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
         {
-            // Antigo AddMvc, suporte ao WebApi
             services.AddControllers();
+
+            services.AddScoped<AuthenticationService>();
+            services.AddScoped<IAspNetUser, AspNetUser>();
 
             return services;
         }
@@ -31,13 +32,14 @@ namespace NSE.Identidade.API.Configuration
 
             app.UseRouting();
 
-            app.UseAuthConfiguration(); // Identity precisa estar entre o UseRouting e UseEndpoints
+            app.UseAuthConfiguration();
 
-            // Percorre todas as classes que herdam de controller e criar os endpoints para cada um
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            
+            app.UseJwksDiscovery();
 
             return app;
         }

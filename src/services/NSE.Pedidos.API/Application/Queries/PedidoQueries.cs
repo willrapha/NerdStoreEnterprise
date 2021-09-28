@@ -1,10 +1,10 @@
-﻿using Dapper;
-using NSE.Pedidos.API.Application.DTO;
-using NSE.Pedidos.Domain.Pedidos;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using NSE.Pedidos.API.Application.DTO;
+using NSE.Pedidos.Domain.Pedidos;
 
 namespace NSE.Pedidos.API.Application.Queries
 {
@@ -12,12 +12,12 @@ namespace NSE.Pedidos.API.Application.Queries
     {
         Task<PedidoDTO> ObterUltimoPedido(Guid clienteId);
         Task<IEnumerable<PedidoDTO>> ObterListaPorClienteId(Guid clienteId);
+        Task<PedidoDTO> ObterPedidosAutorizados();
     }
 
-    // Queries - Exibir dados 
     public class PedidoQueries : IPedidoQueries
     {
-        private readonly IPedidoRepository _pedidoRepository; // Trabalha com o negocio
+        private readonly IPedidoRepository _pedidoRepository;
 
         public PedidoQueries(IPedidoRepository pedidoRepository)
         {
@@ -37,17 +37,8 @@ namespace NSE.Pedidos.API.Application.Queries
                                 AND P.PEDIDOSTATUS = 1 
                                 ORDER BY P.DATACADASTRO DESC";
 
-            // Mapeamento dinamico
             var pedido = await _pedidoRepository.ObterConexao()
                 .QueryAsync<dynamic>(sql, new { clienteId });
-
-            // Mapeamento Dapper mais de uma entidade
-            /*var pedido = await _pedidoRepository.ObterConexao()
-                .QueryAsync<PedidoDTO, PedidoItemDTO, EnderecoDTO, PedidoDTO>(sql, (p, pi, e) => {
-                    p.PedidoItems.Add(pi);
-                    p.Endereco = e;
-                    return p;
-                }, new { clienteId }, splitOn:"");*/
 
             return MapearPedido(pedido);
         }
@@ -57,6 +48,37 @@ namespace NSE.Pedidos.API.Application.Queries
             var pedidos = await _pedidoRepository.ObterListaPorClienteId(clienteId);
 
             return pedidos.Select(PedidoDTO.ParaPedidoDTO);
+        }
+
+        public async Task<PedidoDTO> ObterPedidosAutorizados()
+        {
+            // Correção para pegar todos os itens do pedido e ordernar pelo pedido mais antigo
+            const string sql = @"SELECT 
+                                P.ID as 'PedidoId', P.ID, P.CLIENTEID, 
+                                PI.ID as 'PedidoItemId', PI.ID, PI.PRODUTOID, PI.QUANTIDADE 
+                                FROM PEDIDOS P 
+                                INNER JOIN PEDIDOITEMS PI ON P.ID = PI.PEDIDOID 
+                                WHERE P.PEDIDOSTATUS = 1                                
+                                ORDER BY P.DATACADASTRO";
+
+            // Utilizacao do lookup para manter o estado a cada ciclo de registro retornado
+            var lookup = new Dictionary<Guid, PedidoDTO>();
+
+            await _pedidoRepository.ObterConexao().QueryAsync<PedidoDTO, PedidoItemDTO, PedidoDTO>(sql,
+                (p, pi) =>
+                {
+                    if (!lookup.TryGetValue(p.Id, out var pedidoDTO))
+                        lookup.Add(p.Id, pedidoDTO = p);
+
+                    pedidoDTO.PedidoItems ??= new List<PedidoItemDTO>();
+                    pedidoDTO.PedidoItems.Add(pi);
+
+                    return pedidoDTO;
+
+                }, splitOn: "PedidoId,PedidoItemId");
+
+            // Obtendo dados o lookup
+            return lookup.Values.OrderBy(p=>p.Data).FirstOrDefault();
         }
 
         private PedidoDTO MapearPedido(dynamic result)
@@ -98,4 +120,5 @@ namespace NSE.Pedidos.API.Application.Queries
             return pedido;
         }
     }
+
 }

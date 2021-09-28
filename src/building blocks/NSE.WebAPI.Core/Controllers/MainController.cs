@@ -1,14 +1,14 @@
-﻿using FluentValidation.Results;
+﻿using System.Collections.Generic;
+using System.Linq;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NSE.Core.Communication;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace NSE.WebAPI.Core.Controllers
 {
-    [ApiController] // Atributo que diz que esta classe é uma controller, libera schema swagger
-    public abstract class MainController : Controller // Herda as capacidades de uma controller
+    [ApiController]
+    public abstract class MainController : Controller
     {
         protected ICollection<string> Erros = new List<string>();
 
@@ -19,8 +19,8 @@ namespace NSE.WebAPI.Core.Controllers
                 return Ok(result);
             }
 
-            // ValidationProblemDetails - classe implementa um padrao especificado em uma rfc - como uma api deve responder sobre detalhes de erros
-            return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]> {
+            return BadRequest(new ValidationProblemDetails(new Dictionary<string, string[]>
+            {
                 { "Mensagens", Erros.ToArray() }
             }));
         }
@@ -61,6 +61,7 @@ namespace NSE.WebAPI.Core.Controllers
             {
                 AdicionarErroProcessamento(mensagem);
             }
+
             return true;
         }
 

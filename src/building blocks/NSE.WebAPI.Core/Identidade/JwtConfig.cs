@@ -1,52 +1,39 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using NetDevPack.Security.JwtExtensions;
 
 namespace NSE.WebAPI.Core.Identidade
 {
     public static class JwtConfig
     {
-        public static IServiceCollection AddJwtConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static void AddJwtConfiguration(this IServiceCollection services,
+            IConfiguration configuration)
         {
-            // Configurações JWT
-            var appSettingsSection = configuration.GetSection("AppSettings"); // pegamos o nó AppSettings do nosso arquivo appsettings.json
-            services.Configure<AppSettings>(appSettingsSection); // pedimos para que a classe AppSettings represente a seção AppSettings do nosso arquivo appsettings.json
+            var appSettingsSection = configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
 
-            var appSettings = appSettingsSection.Get<AppSettings>(); // Obtemos a classe
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-
-            // Vamos utilizar o JWT na Authentication
-            services.AddAuthentication(options =>
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            
+            services.AddAuthentication(x =>
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme; // Challenge - desafio de como apresentar e credenciar o usuario internamente
-            }).AddJwtBearer(bearerOptions => // JWT
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
             {
-                bearerOptions.RequireHttpsMetadata = true;
-                bearerOptions.SaveToken = true; // Token sera guardado na instancia
-                bearerOptions.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true, // Validamos o emissor com base na assinatura
-                    IssuerSigningKey = new SymmetricSecurityKey(key), // Chave
-                    ValidateIssuer = true, // Validar o Emissor
-                    ValidateAudience = true, // Validar Dominio
-                    ValidAudience = appSettings.ValidoEm,
-                    ValidIssuer = appSettings.Emissor
-                };
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.SetJwksOptions(new JwkOptions(appSettings.AutenticacaoJwksUrl));
             });
-
-            return services;
         }
 
-        public static IApplicationBuilder UseAuthConfiguration(this IApplicationBuilder app)
+        public static void UseAuthConfiguration(this IApplicationBuilder app)
         {
             app.UseAuthentication();
             app.UseAuthorization();
-
-            return app;
         }
     }
 }

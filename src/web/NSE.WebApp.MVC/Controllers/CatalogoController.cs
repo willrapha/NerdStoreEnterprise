@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using NSE.WebApp.MVC.Services;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using NSE.WebApp.MVC.Services;
 
 namespace NSE.WebApp.MVC.Controllers
 {
@@ -17,9 +17,11 @@ namespace NSE.WebApp.MVC.Controllers
         [HttpGet]
         [Route("")]
         [Route("vitrine")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index([FromQuery] int ps = 8, [FromQuery] int page = 1, [FromQuery] string q = null)
         {
-            var produtos = await _catalogoService.ObterTodos();
+            var produtos = await _catalogoService.ObterTodos(ps, page, q);
+            ViewBag.Pesquisa = q;
+            produtos.ReferenceAction = "Index";
 
             return View(produtos);
         }

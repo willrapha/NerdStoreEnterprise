@@ -9,7 +9,7 @@ namespace NSE.Carrinho.API.Configuration
     {
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // Precisamos registrar devido a classe AspNetUser receber a injeção dele
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
             services.AddScoped<CarrinhoContext>();
         }

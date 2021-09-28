@@ -1,19 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using NSE.Bff.Compras.Extensions;
 using NSE.Bff.Compras.Services;
 using NSE.WebAPI.Core.Extensions;
 using NSE.WebAPI.Core.Usuario;
 using Polly;
-using System;
 
-namespace NSE.Bff.Compras.Configuration
+namespace NSE.Bff.Compras.Configuration.Configuration
 {
     public static class DependencyInjectionConfig
     {
         public static void RegisterServices(this IServiceCollection services)
         {
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // Precisamos registrar devido a classe AspNetUser receber a injeção dele
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IAspNetUser, AspNetUser>();
 
             services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
@@ -22,31 +22,25 @@ namespace NSE.Bff.Compras.Configuration
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<ICarrinhoService, CarrinhoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<IPedidoService, PedidoService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
-
-            services.AddHttpClient<IPagamentoService, PagamentoService>()
-                .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
-                .AddPolicyHandler(PollyExtensions.EsperarTentar())
-                .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
 
             services.AddHttpClient<IClienteService, ClienteService>()
                 .AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>()
                 .AddPolicyHandler(PollyExtensions.EsperarTentar())
                 .AddTransientHttpErrorPolicy(
-                p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
+                    p => p.CircuitBreakerAsync(5, TimeSpan.FromSeconds(30)));
         }
     }
 }

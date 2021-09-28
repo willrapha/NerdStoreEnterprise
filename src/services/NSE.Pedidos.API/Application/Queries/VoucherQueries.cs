@@ -1,6 +1,6 @@
-﻿using NSE.Pedidos.API.Application.DTO;
-using NSE.Pedidos.Domain.Vouchers;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using NSE.Pedidos.API.Application.DTO;
+using NSE.Pedidos.Domain;
 
 namespace NSE.Pedidos.API.Application.Queries
 {
@@ -11,7 +11,7 @@ namespace NSE.Pedidos.API.Application.Queries
 
     public class VoucherQueries : IVoucherQueries
     {
-        private IVoucherRepository _voucherRepository;
+        private readonly IVoucherRepository _voucherRepository;
 
         public VoucherQueries(IVoucherRepository voucherRepository)
         {

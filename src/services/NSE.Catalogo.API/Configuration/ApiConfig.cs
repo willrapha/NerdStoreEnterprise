@@ -18,7 +18,6 @@ namespace NSE.Catalogo.API.Configuration
 
             services.AddControllers();
 
-            // Liberando Cors Aplicação
             services.AddCors(options =>
             {
                 options.AddPolicy("Total",

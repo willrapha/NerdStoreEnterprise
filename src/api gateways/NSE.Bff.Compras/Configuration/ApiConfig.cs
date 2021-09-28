@@ -16,7 +16,6 @@ namespace NSE.Bff.Compras.Configuration
 
             services.Configure<AppServicesSettings>(configuration);
 
-            // Liberando Cors Aplicação
             services.AddCors(options =>
             {
                 options.AddPolicy("Total",

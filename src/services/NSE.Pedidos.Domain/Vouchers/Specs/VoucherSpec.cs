@@ -1,8 +1,8 @@
-﻿using NSE.Core.Specification;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using NetDevPack.Specification;
 
-namespace NSE.Pedidos.Domain.Vouchers.Specs
+namespace NSE.Pedidos.Domain.Specs
 {
     public class VoucherDataSpecification : Specification<Voucher>
     {
@@ -16,7 +16,7 @@ namespace NSE.Pedidos.Domain.Vouchers.Specs
     {
         public override Expression<Func<Voucher, bool>> ToExpression()
         {
-            return voucher => voucher.Quantidade >= 0;
+            return voucher => voucher.Quantidade > 0;
         }
     }
 
